@@ -32,14 +32,20 @@ class PIDController:
         # Check if this is the first time we have received a message
         if self.prev_time != 0:
             # Calculate the dt, error, error_sum (integral) and error_diff (derivative)
+            # Dt is the time difference between the current and previous 
             dt = output.time - self.prev_time
+            # Save the current time for the next iteration
             self.prev_time = output.time
+            # Calculate the error difference between the setpoint and the real output of the motor
             self.error = self.setpoint - output.output 
+            # Calculate the integral of the error (error_sum) the integral is the sum  of the area of the trapeziums formed by the error and the time difference
             self.error_sum += (self.error + self.prev_error) * dt / 2
+            # Calculate the derivative of the error (error_diff) the derivative is the slope of the line formed by the error and the time difference
             self.error_diff = (self.error - self.prev_error) / dt
             # Store the current error for the next iteration
             self.prev_error = self.error
         else:
+            # This is the first time we have received a message so we can't calculate the error_diff or error_sum
             self.prev_time = output.time
         #print("setpoint", self.setpoint, "MotorOutput",  output.output, "Error", self.error, "MotorInput", self.controllerOutput.input)
 
