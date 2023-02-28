@@ -1,3 +1,4 @@
+# Constants for PID control
 kp : 0.123
 ki : 5.32
-kd : 0.0000601
+kd : 0.0

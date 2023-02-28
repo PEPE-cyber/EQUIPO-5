@@ -1,3 +1,10 @@
+# Description: Parameters for the setpoint node
+# freq: Frequency of the setpoint signal
 freq : 0.5
+# amp: Amplitude of the setpoint signal (max and min values)
 amp : 13
+# signal_type: Signal type of the setpoint signal:
+# "random" for random values 
+# "sine" for sine wave
+# "square" for square wave
 signal_type : "random"
