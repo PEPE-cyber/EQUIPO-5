@@ -6,7 +6,6 @@ from pid_control.msg import set_point
 from std_msgs.msg import Float32
 
 #Setup parameters, vriables and callback functions here (if required)
-
 class PIDController:
     def __init__(self):
         # get parameters from parameter server
@@ -38,6 +37,7 @@ class PIDController:
             self.error = self.setpoint - output.output 
             self.error_sum += (self.error + self.prev_error) * dt / 2
             self.error_diff = (self.error - self.prev_error) / dt
+            # Store the current error for the next iteration
             self.prev_error = self.error
         else:
             self.prev_time = output.time
@@ -54,19 +54,24 @@ class PIDController:
         self.motorInputPub.publish(controller.get_output())
   
     def stop(self):
+        # Stop the controller
         print("Stopping")
 
+    # Callback function to update the setpoint from the setpoint topic
     def updateSetpoint(self, setpoint):
+        # Update the setpoint
         self.setpoint = setpoint.value
         #print("Setpoint Updated to: " + str(self.setpoint) + " at time: " + str(setpoint.time) )
 
 if __name__=='__main__':
-    #Initialise and Setup node
+    # Initialise and Setup node
     rospy.init_node("controller")
-
+    # Set the rate of the node (For the publisher rate)
     rate = rospy.Rate(100)
+    # Create an instance of the controller class
     controller = PIDController()
     rospy.on_shutdown(controller.stop)
+    # Create a publisher for the error 
     errorPub = rospy.Publisher("/error", Float32, queue_size=10)
     #Setup Publishers and subscribers here
     
@@ -75,7 +80,10 @@ if __name__=='__main__':
     print("The Controller is Running")
     #Run the node
     while not rospy.is_shutdown():
+        # Run the controller (get the output and publish it)
         controller.run()
+        # Publish the error
         errorPub.publish(controller.error)
+        # Sleep to maintain the rate
         rate.sleep()
 

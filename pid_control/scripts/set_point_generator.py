@@ -13,16 +13,22 @@ def stop():
 
 class SetPointGenerator:
     def __init__(self):
-        self.setpoint = set_point()
+        #Setup parameters
         self.freq = rospy.get_param("/freq")
         self.amp = rospy.get_param("/amp")
         self.signal = rospy.get_param("/signal_type")
+        
+        #Setup msg variable
+        self.setpoint = set_point()
         self.prevTime = 0
         self.setpoint.value = 0
+
         print("Set Point Generator Initialised")
 
     def get_output(self):
+        # Set the time of the setpoint
         self.setpoint.time =  rospy.get_time()
+        # Generate the setpoint depending on the signal type
         if self.signal == "sine": 
             self.setpoint.value = self.amp * (np.sin(2 * np.pi * self.freq * rospy.get_time())) 
         elif self.signal == "square": 
